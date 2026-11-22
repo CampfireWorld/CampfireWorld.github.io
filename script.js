@@ -30,7 +30,18 @@ function toggleTheme() {
     const newTheme = currentTheme === 'campfire' ? 'purple' : 'campfire';
     
     root.setAttribute('data-theme', newTheme);
-    document.getElementById('theme-btn').textContent = newTheme === 'campfire' ? '🌌' : '🔥';
+    
+    // Меняем иконку и картинку
+    const themeBtn = document.getElementById('theme-btn');
+    const mainImage = document.getElementById('main-theme-image');
+    
+    if (newTheme === 'campfire') {
+        themeBtn.textContent = '🌌'; // Иконка для переключения на фиолетовую
+        if (mainImage) mainImage.src = 'main.png'; // Возвращаем первую картинку
+    } else {
+        themeBtn.textContent = '🔥'; // Иконка для переключения на костёр
+        if (mainImage) mainImage.src = 'main2.png'; // Ставим вторую картинку
+    }
 }
 
 // ==========================================
