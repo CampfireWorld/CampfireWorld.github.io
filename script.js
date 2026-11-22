@@ -1,4 +1,15 @@
-// Переключение вкладок
+// --- НАСТРОЙКИ API ---
+// ВНИМАНИЕ: Замени эти данные на свои из конфига плагина ServerAPI!
+const API_IP = '37.27.166.94'; // Твой IP сервера (или домен)
+const API_PORT = '8080';       // Порт, который ты открыл в панели хостинга для API
+const API_TOKEN = 'campfire_super_secret_token_2026'; // Токен из config.yml плагина
+
+// Конструктор URL (если у тебя настроен HTTPS, поменяй http:// на https://)
+const API_URL = `http://${API_IP}:${API_PORT}/api/v1/status`; 
+
+// ==========================================
+// ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК И ТЕМ
+// ==========================================
 function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -13,7 +24,6 @@ function switchTab(tabId, btn) {
     }
 }
 
-// Переключение темы
 function toggleTheme() {
     const root = document.documentElement;
     const currentTheme = root.getAttribute('data-theme');
@@ -23,127 +33,152 @@ function toggleTheme() {
     document.getElementById('theme-btn').textContent = newTheme === 'campfire' ? '🌌' : '🔥';
 }
 
-// --- ФУНКЦИЯ ЗАГРУЗКИ СТАТИСТИКИ ---
+// ==========================================
+// ЗАГРУЗКА СТАТИСТИКИ С СЕРВЕРА
+// ==========================================
 async function fetchServerStatus() {
-    const serverAddress = 'campfireworld.joinserver.ru'; // IP сервера
-    const apiUrl = `https://api.mcstatus.io/v2/status/java/${serverAddress}`;
-
     try {
-        const response = await fetch(apiUrl);
-        
-        // Если API вернуло ошибку (например, сервер оффлайн), обрабатываем это
+        const response = await fetch(API_URL, {
+            headers: {
+                'Authorization': `Bearer ${API_TOKEN}`
+            }
+        });
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
 
-        if (data.online) {
-            // 1. Обновляем онлайн
-            document.getElementById('online-count').innerText = `${data.players.online} / ${data.players.max}`;
-            
-            // 2. Обновляем версию
-            document.getElementById('server-version').innerText = data.version.name_clean || 'Неизвестно';
-            
-            // 3. Обновляем MOTD
-            const motdElement = document.getElementById('server-motd');
-            motdElement.innerHTML = data.motd.html || 'Описание отсутствует';
+        // 1. ОНЛАЙН
+        const online = data.players?.online ?? 0;
+        const max = data.players?.max ?? 20;
+        document.getElementById('online-count').innerText = `${online} / ${max}`;
 
-            // 4. Обновляем список игроков
-            const listContainer = document.getElementById('player-list');
-            listContainer.innerHTML = ''; // Очищаем контейнер
+        // 2. ВЕРСИЯ
+        document.getElementById('server-version').innerText = data.version || '1.21.11';
 
-            if (data.players.list && data.players.list.length > 0) {
-                data.players.list.forEach(player => {
-                    // Создаём тег для игрока с его головой
-                    const playerTag = document.createElement('div');
-                    playerTag.className = 'player-tag';
-                    
-                    // Используем сервис mc-heads.net для получения головы игрока по нику
-                    const headUrl = `https://mc-heads.net/avatar/${player.name_clean}/40`;
-                    
-                    playerTag.innerHTML = `
-                        <img src="${headUrl}" alt="${player.name_clean}" class="player-head" onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/40'">
-                        <span>${player.name_clean}</span>
-                    `;
-                    
-                    listContainer.appendChild(playerTag);
-                });
-            } else {
-                listContainer.innerHTML = `<p style="color: var(--text-muted);">Сейчас на сервере никого нет. Стань первым!</p>`;
+        // 3. РЕАЛЬНЫЙ TPS (обычно плагин отдает массив [1m, 5m, 15m] или объект)
+        let tps = 20.0;
+        if (data.tps) {
+            if (Array.isArray(data.tps)) {
+                tps = data.tps[0]; // Берем TPS за 1 минуту
+            } else if (typeof data.tps === 'object') {
+                tps = data.tps['1m'] || data.tps.oneMinute || 20.0;
+            } else if (typeof data.tps === 'number') {
+                tps = data.tps;
             }
-        } else {
-            // Если сервер оффлайн
-            document.getElementById('online-count').innerText = 'Оффлайн';
-            document.getElementById('server-version').innerText = '---';
-            document.getElementById('server-motd').innerText = 'Сервер сейчас выключен или перезагружается.';
-            document.getElementById('player-list').innerHTML = `<p style="color: var(--text-muted);">Сервер оффлайн. Заходи позже!</p>`;
         }
-    } catch (error) {
-        console.error("Ошибка при загрузке статуса сервера:", error);
         
-        // Если произошла ошибка (например, недоступен API)
-        document.getElementById('online-count').innerText = 'Ошибка';
-        document.getElementById('server-version').innerText = 'Ошибка';
-        document.getElementById('server-motd').innerText = 'Не удалось загрузить данные о сервере.';
-        document.getElementById('player-list').innerHTML = `<p style="color: var(--text-muted);">Не удалось подключиться к API.</p>`;
+        const tpsElement = document.getElementById('tps-value');
+        tpsElement.innerText = parseFloat(tps).toFixed(1);
+        
+        // Красим TPS в зависимости от просадки
+        if (tps < 15.0) {
+            tpsElement.style.color = '#ef4444'; // Красный
+        } else if (tps < 19.0) {
+            tpsElement.style.color = '#eab308'; // Желтый
+        } else {
+            tpsElement.style.color = '#4ade80'; // Зеленый
+        }
+
+        // 4. АПТАЙМ (время с последнего рестарта)
+        const uptimeSeconds = data.uptime || 0;
+        const days = Math.floor(uptimeSeconds / 86400);
+        const hours = Math.floor((uptimeSeconds % 86400) / 3600);
+        const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+        
+        let uptimeText = '';
+        if (days > 0) uptimeText += `${days}д `;
+        if (hours > 0 || days > 0) uptimeText += `${hours}ч `;
+        uptimeText += `${minutes}м`;
+        
+        document.getElementById('uptime').innerText = uptimeText;
+
+        // 5. СПИСОК ИГРОКОВ
+        const listContainer = document.getElementById('player-list');
+        listContainer.innerHTML = ''; 
+        
+        // Плагины могут отдавать список просто как массив строк или как массив объектов {name: "..."}
+        let playersList = [];
+        if (data.players && data.players.list) {
+            playersList = data.players.list;
+        }
+
+        if (playersList.length > 0) {
+            playersList.forEach(player => {
+                // Если player - объект, берем имя, если строка - берем саму строку
+                const playerName = typeof player === 'string' ? player : (player.name || player.username);
+                
+                if (!playerName) return;
+
+                const playerTag = document.createElement('div');
+                playerTag.className = 'player-tag';
+                const headUrl = `https://mc-heads.net/avatar/${playerName}/40`;
+                
+                playerTag.innerHTML = `
+                    <img src="${headUrl}" alt="${playerName}" class="player-head" onerror="this.src='https://mc-heads.net/avatar/MHF_Steve/40'">
+                    <span>${playerName}</span>
+                `;
+                listContainer.appendChild(playerTag);
+            });
+        } else {
+            listContainer.innerHTML = `<p style="color: var(--text-muted);">Сейчас на сервере никого нет. Стань первым!</p>`;
+        }
+
+    } catch (error) {
+        console.error("Ошибка при загрузке статуса с сервера:", error);
+        
+        // Если API выключено или упало
+        document.getElementById('online-count').innerText = 'Оффлайн';
+        document.getElementById('tps-value').innerText = '--';
+        document.getElementById('tps-value').style.color = 'var(--text-muted)';
+        document.getElementById('uptime').innerText = 'Нет связи';
+        document.getElementById('player-list').innerHTML = `<p style="color: var(--text-muted);">Не удалось получить данные от сервера. Возможно, он выключен или API заблокировано.</p>`;
     }
 }
 
-// --- ЗАПУСК 3D СКИНОВ И СТАТИСТИКИ ---
-window.addEventListener("load", () => {
-    // 1. Запуск 3D скинов
-    if (typeof skinview3d !== 'undefined') {
-        const createSkin = (canvasId, skinUrl) => {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            try {
-                const viewer = new skinview3d.SkinViewer({
-                    canvas: canvas,
-                    width: 150,
-                    height: 300,
-                    skin: skinUrl
-                });
-                viewer.animation = null; // Отключаем анимацию
-                viewer.camera.rotation.y = -0.5; // Легкий поворот
-            } catch (e) {
-                console.error("Ошибка при загрузке скина " + skinUrl, e);
-            }
-        };
-
-        createSkin("skin-V", "V.png");
-        createSkin("skin-R", "R.png");
-        createSkin("skin-F", "F.png");
+// ==========================================
+// 3D СКИНЫ
+// ==========================================
+function initSkins() {
+    if (typeof skinview3d === 'undefined') {
+        console.warn("Библиотека skinview3d не загружена.");
+        return;
     }
 
-    // 2. Запуск загрузки статистики
+    const createSkin = (canvasId, skinUrl) => {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        try {
+            const viewer = new skinview3d.SkinViewer({
+                canvas: canvas,
+                width: 150,
+                height: 300,
+                skin: skinUrl
+            });
+            viewer.animation = null; 
+            viewer.camera.rotation.y = -0.5; 
+        } catch (e) {
+            console.error("Ошибка скина " + skinUrl, e);
+        }
+    };
+
+    createSkin("skin-V", "V.png");
+    createSkin("skin-R", "R.png");
+    createSkin("skin-F", "F.png");
+}
+
+// ==========================================
+// ЗАПУСК
+// ==========================================
+window.addEventListener("load", () => {
+    // 1. Инициализация 3D скинов
+    initSkins();
+
+    // 2. Первый запрос статистики
     fetchServerStatus();
 
-    // 3. Обновление статистики каждые 30 секунд
+    // 3. Обновление каждые 30 секунд
     setInterval(fetchServerStatus, 30000);
 });
-
-// --- СКАЧИВАНИЕ ФАЙЛОВ С GOOGLE ДИСКА ---
-function downloadBoth() {
-    // Прямые ссылки на скачивание (uc?export=download + confirm=t для обхода вирусов)
-    const modsUrl = 'https://drive.google.com/uc?export=download&id=1_I6Jn_HEwUl2innsJaAUp3Y3lZvd-Dv5&confirm=t';
-    const packsUrl = 'https://drive.google.com/uc?export=download&id=1Jp3-ZgZlbtp8XTI4hfE8SafWFOVyC_VR&confirm=t';
-
-    // Создаем невидимую ссылку для модов и "кликаем" по ней
-    const linkMods = document.createElement('a');
-    linkMods.href = modsUrl;
-    linkMods.download = 'CWMods.zip'; // Имя файла при скачивании
-    document.body.appendChild(linkMods);
-    linkMods.click();
-    document.body.removeChild(linkMods);
-
-    // Ждем 1.5 секунды, чтобы браузер не заблокировал второе скачивание
-    setTimeout(() => {
-        const linkPacks = document.createElement('a');
-        linkPacks.href = packsUrl;
-        linkPacks.download = 'CWResourcepacks.zip';
-        document.body.appendChild(linkPacks);
-        linkPacks.click();
-        document.body.removeChild(linkPacks);
-    }, 1500);
-}
