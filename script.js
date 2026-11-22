@@ -1,8 +1,8 @@
 // --- НАСТРОЙКИ API ---
 const API_IP = '37.27.166.94';
-const API_PORT = '8080';
-const API_TOKEN = 'campfire_super_secret_token_2026';
-const API_URL = `http://${API_IP}:${API_PORT}/api/v1/status`; 
+const API_PORT = '25532';
+const API_TOKEN = '2H-0s6mmf3ZAsJAenQaHV_CjjAzo0CJTSRt_dixOIK8';
+const API_BASE = `http://${API_IP}:${API_PORT}/api`; 
 
 // ==========================================
 // КОПИРОВАНИЕ IP (СО СЛУЧАЙНЫМ РАЗБРОСОМ)
@@ -13,7 +13,6 @@ function copyToClipboard(event, text) {
         toast.className = 'copy-toast';
         toast.innerText = 'Скопировано!';
         
-        // Случайный разброс вокруг курсора (-30 до +30 пикселей по X, -20 до +20 по Y)
         const randomX = (Math.random() - 0.5) * 60;
         const randomY = (Math.random() - 0.5) * 40;
         
@@ -22,7 +21,6 @@ function copyToClipboard(event, text) {
         
         document.body.appendChild(toast);
         
-        // Удаляем элемент после окончания CSS-анимации (1.5 сек)
         setTimeout(() => {
             if (toast.parentNode) toast.parentNode.removeChild(toast);
         }, 1500);
@@ -39,62 +37,49 @@ function initFox() {
     const container = document.getElementById('fox-container');
     if (!container) return;
 
-    // 1. Сцена, камера, рендерер
     const scene = new THREE.Scene();
-    
-    // Настройка камеры (FOV, Aspect, Near, Far)
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 1, 4); // Отодвигаем камеру
+    camera.position.set(0, 1, 4);
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     container.appendChild(renderer.domElement);
 
-    // 2. Освещение (чтобы модель не была черной)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
-    
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
     dirLight.position.set(5, 5, 5);
     scene.add(dirLight);
 
-// ... (начало функции initFox() и создание сцены, камеры, рендерера, света остаются без изменений)
-
-    // Загрузчик
     const loader = new THREE.GLTFLoader();
     
-    // ... (код для DRACOLoader остается без изменений)
+    if (typeof THREE.DRACOLoader !== 'undefined') {
+        const dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.1/');
+        loader.setDRACOLoader(dracoLoader);
+    }
 
-    // Загрузка модели
     loader.load('./fox.glb', function (gltf) {
         const model = gltf.scene;
-
-        // 1. Сначала "сбрасываем" возможные странные трансформации модели
+        
         model.position.set(0, 0, 0);
         model.scale.set(1, 1, 1);
 
-        // 2. Вычисляем реальные размеры и центр модели
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const center = box.getCenter(new THREE.Vector3());
 
-        // 3. Автоматически центрируем модель в начале координат
         model.position.x += (model.position.x - center.x);
         model.position.y += (model.position.y - center.y);
         model.position.z += (model.position.z - center.z);
 
-        // 4. Автоматически масштабируем модель
-        // Находим самую большую сторону, чтобы вписать модель в куб со стороной 2
         const maxDim = Math.max(size.x, size.y, size.z);
         const scale = 2 / maxDim;
         model.scale.set(scale, scale, scale);
 
         scene.add(model);
-        console.log("Модель лисы успешно загружена и адаптирована!");
 
-        // 5. Теперь, когда модель на месте, можно настроить камеру
-        // Ставим камеру на расстоянии, чтобы модель точно поместилась в кадр
         camera.position.set(0, 0, 3); 
         camera.lookAt(0, 0, 0);
 
@@ -112,9 +97,6 @@ function initFox() {
         container.innerHTML = '<div style="font-size: 60px; text-align: center; line-height: 120px;" title="Ошибка: модель не загрузилась">🦊</div>';
     });
 
-// ... (остальной код функции initFox() остается без изменений)
-
-    // 4. Клик по лисе
     const phrases = [
         "Фыр", "фыр", "ФЫР", "Фыр!", "Фырк", "фыр~", "Фыр?", "ФЫРК!", 
         "фыр...", "Фыр-фыр", "Фырк~", "фыр!", "Фырк?", "ФЫР...", "фыр-фыр~", 
@@ -122,16 +104,13 @@ function initFox() {
     ];
 
     container.addEventListener('click', (e) => {
-        // Добавляем класс тряски
         container.classList.add('shake');
         setTimeout(() => container.classList.remove('shake'), 400);
 
-        // Создаем текст
         const phraseEl = document.createElement('div');
         phraseEl.className = 'fox-phrase';
         phraseEl.innerText = phrases[Math.floor(Math.random() * phrases.length)];
 
-        // Случайная позиция вокруг курсора ВНУТРИ контейнера
         const rect = container.getBoundingClientRect();
         const x = e.clientX - rect.left + (Math.random() - 0.5) * 40;
         const y = e.clientY - rect.top + (Math.random() - 0.5) * 40;
@@ -141,13 +120,11 @@ function initFox() {
         
         container.appendChild(phraseEl);
 
-        // Удаляем после завершения анимации
         setTimeout(() => {
             if (phraseEl.parentNode) phraseEl.parentNode.removeChild(phraseEl);
         }, 1200);
     });
 
-    // Обновление размера при ресайзе окна
     window.addEventListener('resize', () => {
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
@@ -185,29 +162,47 @@ function toggleTheme() {
 }
 
 // ==========================================
-// ЗАГРУЗКА СТАТИСТИКИ С СЕРВЕРА
+// ЗАГРУЗКА СТАТИСТИКИ С СЕРВЕРА (ELEMENTRIX API)
 // ==========================================
 async function fetchServerStatus() {
     try {
-        const response = await fetch(API_URL, {
-            headers: { 'Authorization': `Bearer ${API_TOKEN}` }
-        });
+        // Запрашиваем все нужные данные ОДНОВРЕМЕННО для скорости
+        const headers = { 'Authorization': `Bearer ${API_TOKEN}` };
+        
+        const [statusRes, perfRes, playersRes] = await Promise.all([
+            fetch(`${API_BASE}/status`, { headers }),
+            fetch(`${API_BASE}/performance`, { headers }),
+            fetch(`${API_BASE}/players`, { headers })
+        ]);
 
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!statusRes.ok || !perfRes.ok || !playersRes.ok) {
+            throw new Error(`HTTP error! Status: ${statusRes.status}`);
+        }
 
-        const data = await response.json();
+        const statusData = await statusRes.json();
+        const perfData = await perfRes.json();
+        const playersData = await playersRes.json();
 
-        const online = data.players?.online ?? 0;
-        const max = data.players?.max ?? 20;
+        // Выведем данные в консоль, чтобы ты мог посмотреть, как они называются, если вдруг что-то не совпадет
+        console.log("API Status:", statusData);
+        console.log("API Performance:", perfData);
+        console.log("API Players:", playersData);
+
+        // 1. ОНЛАЙН (пытаемся найти в разных возможных ключах)
+        const online = statusData.online ?? statusData.players?.online ?? statusData.playersOnline ?? 0;
+        const max = statusData.max ?? statusData.players?.max ?? statusData.playersMax ?? 20;
         document.getElementById('online-count').innerText = `${online} / ${max}`;
 
-        document.getElementById('server-version').innerText = data.version || '1.21.11';
+        // 2. ВЕРСИЯ
+        document.getElementById('server-version').innerText = statusData.version || statusData.serverVersion || '1.21.11';
 
+        // 3. TPS (TPS обычно приходит в performance)
         let tps = 20.0;
-        if (data.tps) {
-            if (Array.isArray(data.tps)) tps = data.tps[0];
-            else if (typeof data.tps === 'object') tps = data.tps['1m'] || data.tps.oneMinute || 20.0;
-            else if (typeof data.tps === 'number') tps = data.tps;
+        const rawTps = perfData.tps || perfData.TPS;
+        if (rawTps) {
+            if (Array.isArray(rawTps)) tps = rawTps[0]; // Берем за 1 минуту
+            else if (typeof rawTps === 'object') tps = rawTps['1m'] || rawTps.oneMinute || 20.0;
+            else if (typeof rawTps === 'number') tps = rawTps;
         }
         
         const tpsElement = document.getElementById('tps-value');
@@ -217,7 +212,8 @@ async function fetchServerStatus() {
         else if (tps < 19.0) tpsElement.style.color = '#eab308';
         else tpsElement.style.color = '#4ade80';
 
-        const uptimeSeconds = data.uptime || 0;
+        // 4. АПТАЙМ (обычно в status, в секундах)
+        const uptimeSeconds = statusData.uptime || statusData.uptimeSeconds || 0;
         const days = Math.floor(uptimeSeconds / 86400);
         const hours = Math.floor((uptimeSeconds % 86400) / 3600);
         const minutes = Math.floor((uptimeSeconds % 3600) / 60);
@@ -227,16 +223,18 @@ async function fetchServerStatus() {
         if (hours > 0 || days > 0) uptimeText += `${hours}ч `;
         uptimeText += `${minutes}м`;
         
-        document.getElementById('uptime').innerText = uptimeText;
+        document.getElementById('uptime').innerText = uptimeText || 'Только что';
 
+        // 5. СПИСОК ИГРОКОВ
         const listContainer = document.getElementById('player-list');
         listContainer.innerHTML = ''; 
         
-        let playersList = [];
-        if (data.players && data.players.list) playersList = data.players.list;
+        // API может возвращать массив как есть, или внутри объекта
+        let playersList = Array.isArray(playersData) ? playersData : (playersData.players || playersData.list || []);
 
         if (playersList.length > 0) {
             playersList.forEach(player => {
+                // Имя может быть строкой или объектом {name: "..."}
                 const playerName = typeof player === 'string' ? player : (player.name || player.username);
                 if (!playerName) return;
 
@@ -269,7 +267,6 @@ async function fetchServerStatus() {
 // ==========================================
 function initSkins() {
     if (typeof skinview3d === 'undefined') return;
-
     const createSkin = (canvasId, skinUrl) => {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
@@ -283,7 +280,6 @@ function initSkins() {
             console.error("Ошибка скина " + skinUrl, e);
         }
     };
-
     createSkin("skin-V", "V.png");
     createSkin("skin-R", "R.png");
     createSkin("skin-F", "F.png");
@@ -294,7 +290,7 @@ function initSkins() {
 // ==========================================
 window.addEventListener("load", () => {
     initSkins();
-    initFox(); // Запуск лисы
+    initFox(); 
     fetchServerStatus();
-    setInterval(fetchServerStatus, 30000);
+    setInterval(fetchServerStatus, 30000); // Обновление каждые 30 сек
 });
