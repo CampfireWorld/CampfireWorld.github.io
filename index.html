@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="campfire">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampfireWorld | Уютный сервер</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Более надежная ссылка на библиотеку скинов -->
+    <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/bundles/skinview3d.bundle.js"></script>
+</head>
+<body>
+
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <header class="glass-nav">
+        <div class="nav-left">
+            <div class="logo">🔥 CampfireWorld</div>
+            <nav>
+                <button class="nav-btn active" onclick="switchTab('home', this)">Главная</button>
+                <button class="nav-btn" onclick="switchTab('about', this)">О проекте</button>
+            </nav>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌌</button>
+    </header>
+
+    <main>
+        <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
+        <section id="home" class="tab-content active">
+            
+            <div class="hero-grid">
+                <div class="hero-left">
+                    <div class="title-row">
+                        <h1 class="main-title">CampfireWorld</h1>
+                        <span class="version-badge">Версия 1.21.11</span>
+                    </div>
+                    
+                    <div class="glass-card description-card">
+                        <h2 class="sub-title">Место, где тепло.</h2>
+                        <p>
+                            CampfireWorld — это маленький, уютный ванильный сервер, созданный для душевных посиделок. 
+                            Здесь нет безумных плагинов, ломающих базовую игру, и нет жестких правил. 
+                            Мы не гонимся за популярностью и онлайном в тысячи человек. Наша цель — создать ламповое место, 
+                            где можно собраться с друзьями, строить, исследовать мир и просто общаться. 
+                            Гриф мобами отключен — ваши постройки в безопасности.
+                        </p>
+                        <button class="btn secondary-btn" onclick="switchTab('about', document.querySelectorAll('.nav-btn')[1])">
+                            Подать заявку →
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-right glass-card image-card">
+                    <img src="main.png" alt="Скриншот CampfireWorld" class="main-image">
+                </div>
+            </div>
+
+            <h2 class="section-title">Статус сервера</h2>
+            <div class="stats-grid">
+                <div class="glass-card stat-box">
+                    <span class="stat-label">Игроков онлайн</span>
+                    <span class="stat-value" id="online-count">Загрузка...</span>
+                </div>
+                <div class="glass-card stat-box">
+                    <span class="stat-label">TPS (Тиков в секунду)</span>
+                    <span class="stat-value" style="color: #4ade80;">20.0</span>
+                </div>
+                <div class="glass-card stat-box">
+                    <span class="stat-label">Аптайм</span>
+                    <span class="stat-value" id="uptime">В сети</span>
+                </div>
+            </div>
+
+            <h2 class="section-title">Кто сейчас у костра?</h2>
+            <div class="glass-card players-container" id="player-list">
+                <p style="color: var(--text-muted);">Подключение к API сервера...</p>
+            </div>
+
+        </section>
+
+        <!-- ВКЛАДКА 2: О ПРОЕКТЕ -->
+        <section id="about" class="tab-content">
+            
+            <div class="glass-card about-info">
+                <h2>Как мы строили этот мир</h2>
+                <p>Этот сервер — не просто скачанный шаблон. Это результат сотен часов работы, бессонных ночей и постоянного поиска решений. Мы начинали с нуля, сталкивались с кучей ошибок, но скрупулезно чинили каждую, чтобы вам было комфортно.</p>
+                <p>Мы вручную настраивали каждый плагин, чтобы сохранить ванильный дух игры. Нам пришлось разбираться с прокси-серверами (Anycast), чтобы у всех был стабильный пинг, и настраивать порты, чтобы у вас работал голосовой чат. Мы не сдавались, даже когда сервер падал или когда TPS проседал на фермах. Всё это — ради создания уютного места.</p>
+                
+                <h3>Как к нам попасть?</h3>
+                <ul>
+                    <li><b>Версия:</b> 1.21.11 (Java Edition). Лицензия не требуется.</li>
+                    <li><b>Вайтлист:</b> Включен для защиты от случайных людей. Подай заявку ниже.</li>
+                    <li><b>Голосовой чат:</b> Установлен PlasmoVoice (работает прямо в игре).</li>
+                    <li><b>Кастомизация:</b> Поддерживается мод Figura для кастомных моделек.</li>
+                </ul>
+
+                <h3>Наши адреса:</h3>
+                <div class="ip-box">
+                    <p><b>Основной IP:</b> <code>campfireworld.joinserver.ru</code></p>
+                    <p><b>Запасной IP (через прокси):</b> <code>campfireworldproxy.joinserver.ru</code></p>
+                </div>
+
+                <a href="#" class="btn" target="_blank">Подать заявку на вайтлист</a>
+            </div>
+
+            <div class="glass-card downloads-info">
+                <h2>Необязательная сборка</h2>
+                <p>Играть можно с абсолютно чистым клиентом. Но если вы хотите видеть наши кастомные модельки, ресурспаки и другие плюшки — скачайте сборку.</p>
+                <div class="download-buttons">
+                    <a href="CampfireWorld.mrpack" download class="btn outline-btn">Скачать .mrpack (Лаунчеры)</a>
+                    <a href="CWMods.zip" download class="btn outline-btn">Скачать Моды (.zip)</a>
+                    <a href="CWResourcepacks.zip" download class="btn outline-btn">Скачать Ресурспаки (.zip)</a>
+                </div>
+                <p class="small-note">* Все файлы полностью опциональны и не обязательны для игры.</p>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 50px;">Кто над этим работал?</h2>
+            <p class="team-subtitle">Мы работали над этим вместе, вкладывая душу в каждую деталь.</p>
+
+            <div class="team-list">
+                
+                <!-- 1. VerselTheFox (Скин СЛЕВА, Текст СПРАВА) -->
+                <div class="team-member layout-skin-left glass-card">
+                    <div class="skin-container">
+                        <canvas id="skin-V"></canvas>
+                    </div>
+                    <div class="team-info">
+                        <h3>VerselTheFox</h3>
+                        <p>Идейный вдохновитель и душа проекта. Придумал концепцию «посиделок у костра», разработал этот сайт с нуля, занимался визуальной частью (включая настройку TAB и сообщений), тестированием каждой механики и координацией всех процессов. Вложил всю душу в атмосферу.</p>
+                    </div>
+                </div>
+
+                <!-- 2. regexthefox (Текст СЛЕВА, Скин СПРАВА) -->
+                <div class="team-member layout-skin-right glass-card">
+                    <div class="team-info">
+                        <h3>regexthefox</h3>
+                        <p>Технический фундамент. Оплачивает хостинг, поднял сервер с нуля, настроил ядро Paper. Разбирался со сложными прокси-туннелями (Anycast) для стабильного входа, пробрасывал порты для PlasmoVoice, настраивал LuckPerms, чтобы скрыть плагины от читеров и выдать безопасные права модераторам. Постоянно фиксит баги и работает с конфигами.</p>
+                    </div>
+                    <div class="skin-container">
+                        <canvas id="skin-R"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3. FnQwZz (Скин СЛЕВА, Текст СПРАВА) -->
+                <div class="team-member layout-skin-left glass-card">
+                    <div class="skin-container">
+                        <canvas id="skin-F"></canvas>
+                    </div>
+                    <div class="team-info">
+                        <h3>FnQwZz</h3>
+                        <p>Катализатор и моральная поддержка. Именно он однажды сказал, что ему негде играть и стримить, что подтолкнуло нас к активным действиям. Без него идея могла бы так и остаться в голове, а этот сервер — не появиться на свет. Он стал искрой для нашего костра.</p>
+                    </div>
+                </div>
+
+                <!-- 4. DeepSeek (Текст СЛЕВА, Иконка СПРАВА) -->
+                <div class="team-member layout-skin-right glass-card">
+                    <div class="team-info">
+                        <h3>DeepSeek AI</h3>
+                        <p>Цифровой технический помощник. Помогал писать код для этого сайта (от дизайна до логики), разбирал ошибки в конфигах, подсказывал, как правильно настроить права в LuckPerms и решить проблемы с отображением плейсхолдеров. Всегда на связи для генерации идей и фиксов багов.</p>
+                    </div>
+                    <div class="skin-container">
+                        <!-- Логотип D.jpg -->
+                        <img src="D.jpg" alt="DeepSeek Logo" class="deepseek-icon">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="glass-footer">
+        <p>&copy; 22 Ноября 2026 года. CampfireWorld. Все права защищены.</p>
+        <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 5px;">Сделано с любовью у костра.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
