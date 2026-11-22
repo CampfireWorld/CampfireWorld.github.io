@@ -122,3 +122,28 @@ window.addEventListener("load", () => {
     // 3. Обновление статистики каждые 30 секунд
     setInterval(fetchServerStatus, 30000);
 });
+
+// --- СКАЧИВАНИЕ ФАЙЛОВ С GOOGLE ДИСКА ---
+function downloadBoth() {
+    // Прямые ссылки на скачивание (uc?export=download + confirm=t для обхода вирусов)
+    const modsUrl = 'https://drive.google.com/uc?export=download&id=1_I6Jn_HEwUl2innsJaAUp3Y3lZvd-Dv5&confirm=t';
+    const packsUrl = 'https://drive.google.com/uc?export=download&id=1Jp3-ZgZlbtp8XTI4hfE8SafWFOVyC_VR&confirm=t';
+
+    // Создаем невидимую ссылку для модов и "кликаем" по ней
+    const linkMods = document.createElement('a');
+    linkMods.href = modsUrl;
+    linkMods.download = 'CWMods.zip'; // Имя файла при скачивании
+    document.body.appendChild(linkMods);
+    linkMods.click();
+    document.body.removeChild(linkMods);
+
+    // Ждем 1.5 секунды, чтобы браузер не заблокировал второе скачивание
+    setTimeout(() => {
+        const linkPacks = document.createElement('a');
+        linkPacks.href = packsUrl;
+        linkPacks.download = 'CWResourcepacks.zip';
+        document.body.appendChild(linkPacks);
+        linkPacks.click();
+        document.body.removeChild(linkPacks);
+    }, 1500);
+}
