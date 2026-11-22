@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CampfireWorld | Уютный сервер</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAD9klEQVR4nO1avVPUQBx9fHgnXFR0HDzHykEc5wpsrrG0sXAsHUpb9Q+w559gtLa0ltqShoYrGMaPHhl0UHMIAsYieQd5lx+b3Adx5vY1ud1sdjf73u8rAJSE1cXpaHVxOiprfWK87A2UjbGyFlb2H7zbK2UvI6+A0g5gvjGO+Ub551/+DkrG5HkvOGjPz/l69SFeAYOaKC8Tavdl+wGvgEFN5GJebX+qeQ8A8HttM3Vf52m/b0YAUHuy1leesLMURABwfSlMzeMVcF4LuWzdup+XeZcPUuYJr4BhL+CK+3l9gTUvlfNp429P+/MKGPYCattkfKL5EABwvPZh2Fs4E14B570gmbfgihZq+/3CK6DoA0W9NEHb/9/gFdDrg/3W4QR9wlTSduUDtH3NH9hfdF9eAUUfcGVelu13ef9rC/H1eyt1n0rAxsaZ+7CUUxReAXkHKrNWHHbm5mRe24kSrPlZzw86mngFuAa4Mi/rS8vCs0a+HZD5jjLStYEynzeTzBsNvAJcA3iCZIIIXrwEcFLN7SxtZjLlrPbEJ3QYTrx6XuatfbvgFZB3IL26+gKNx06mumw+G0WZ18wwL0ZeAYXzeH6nJ1wZXle/BVWG9XzSr76FzFtffy2MvAKG/0XIYl4Zt8Y5lEPm/VfhHlFYAa23cZXmzPTUlq0aQJEzSij8/wf0iLG7M5cjAPi4+zPzBK1cn9GgEwVcjPcLiQrhm9fI2lfeGuBWLR438gqYrNcu8ncqvlMRVlyl9z3JAJMfyrylCCvuW+MSMP5bXt9inowTN6bj9/YKCCoTAIA64hOpX6ryXuZfdamMTm0AUcKjPr27MY7MMwrltXGCjBNBJQ6AXgFBNT4JXrd+HQAA6BtOKQIA0D48igDg6UrSsRIrYf1VrISgeXYO35XjK6xaQKAMK+ZmAgBA+OcIAFAPqkn7GACw1d4H4BWAsce3b0YAsBUmzAfVzIG8b+Hr3n6qXbsQK6q1vRx3uKpDg/G5ueXMfs4f8FrhdSI1Thkn+JxXADNB2jxthqAi6CMU4UE8XhVCRr7shql+Mke0Np+n2so4bVkZPJW/pPYdHqb3rwohuC+vgJlKJQKA2SROtpMTVC9KqDdV0AYtRShUIa51Cc5flHGC7+kVQAUo1FbJDKEMWQxrHtF5PvEdVJLacFuYtZSh0ceCzkd4BVgKUKgiNA4rLJu1xmmU+fytnWqrrbcNpbig7+EVwJy66EkSs1JlKe5craXaavMKVY6lDFUEsW34BGWe8Aqwqqp+bcvq57z3Z6+k+i1lWLWJKoNRZX37R+Z61r68AlQBeZm3ogJhRQerRqAiNMO0MkudT/MNftewMkBi5BXwD3w76INdP+8sAAAAAElFTkSuQmCC">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- Более надежная ссылка на библиотеку скинов -->
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/bundles/skinview3d.bundle.js"></script>
 </head>
 <body>
@@ -29,59 +29,61 @@
     </header>
 
     <main>
-        <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
-        <section id="home" class="tab-content active">
-            
-            <div class="hero-grid">
-                <div class="hero-left">
-                    <div class="title-row">
-                        <h1 class="main-title">CampfireWorld</h1>
-                        <span class="version-badge">Версия 1.21.11</span>
-                    </div>
-                    
-                    <div class="glass-card description-card">
-                        <h2 class="sub-title">Место, где тепло.</h2>
-                        <p>
-                            CampfireWorld — это маленький, уютный ванильный сервер, созданный для душевных посиделок. 
-                            Здесь нет безумных плагинов, ломающих базовую игру, и нет жестких правил. 
-                            Мы не гонимся за популярностью и онлайном в тысячи человек. Наша цель — создать ламповое место, 
-                            где можно собраться с друзьями, строить, исследовать мир и просто общаться. 
-                            Гриф мобами отключен — ваши постройки в безопасности.
-                        </p>
-                        <button class="btn secondary-btn" onclick="switchTab('about', document.querySelectorAll('.nav-btn')[1])">
-                            Подать заявку →
-                        </button>
-                    </div>
-                </div>
-                <div class="hero-right glass-card image-card">
-                    <img src="main.png" alt="Скриншот CampfireWorld" class="main-image">
-                </div>
-            </div>
+		<section id="home" class="tab-content active">
+			
+			<div class="hero-grid">
+				<div class="hero-left">
+					<div class="title-row">
+						<h1 class="main-title">CampfireWorld</h1>
+						<span class="version-badge">Версия 1.21.11</span>
+					</div>
+					
+					<div class="glass-card description-card">
+						<h2 class="sub-title">Место, где тепло.</h2>
+						<p>
+							CampfireWorld — это маленький, уютный ванильный сервер, созданный для душевных посиделок. 
+							Здесь нет безумных плагинов, ломающих базовую игру, и нет жестких правил. 
+							Мы не гонимся за популярностью и онлайном в тысячи человек. Наша цель — создать ламповое место, 
+							где можно собраться с друзьями, строить, исследовать мир и просто общаться. 
+							Гриф мобами отключен — ваши постройки в безопасности.
+						</p>
+						<button class="btn secondary-btn" onclick="switchTab('about', document.querySelectorAll('.nav-btn')[1])">
+							Подать заявку →
+						</button>
+					</div>
+				</div>
+				<div class="hero-right glass-card image-card">
+					<img src="main.png" alt="Скриншот CampfireWorld" class="main-image">
+				</div>
+			</div>
 
-            <h2 class="section-title">Статус сервера</h2>
-            <div class="stats-grid">
-                <div class="glass-card stat-box">
-                    <span class="stat-label">Игроков онлайн</span>
-                    <span class="stat-value" id="online-count">Загрузка...</span>
-                </div>
-                <div class="glass-card stat-box">
-                    <span class="stat-label">TPS (Тиков в секунду)</span>
-                    <span class="stat-value" style="color: #4ade80;">20.0</span>
-                </div>
-                <div class="glass-card stat-box">
-                    <span class="stat-label">Аптайм</span>
-                    <span class="stat-value" id="uptime">В сети</span>
-                </div>
-            </div>
+			<h2 class="section-title">Статус сервера</h2>
+			<div class="stats-grid">
+				<div class="glass-card stat-box">
+					<span class="stat-label">Игроков онлайн</span>
+					<span class="stat-value" id="online-count">Загрузка...</span>
+				</div>
+				<div class="glass-card stat-box">
+					<span class="stat-label">Версия</span>
+					<span class="stat-value" id="server-version">Загрузка...</span>
+				</div>
+				<div class="glass-card stat-box">
+					<span class="stat-label">TPS</span>
+					<span class="stat-value" style="color: #4ade80;">20.0</span>
+				</div>
+				<div class="glass-card stat-box">
+					<span class="stat-label">Аптайм</span>
+					<span class="stat-value" id="uptime">В сети</span>
+				</div>
+			</div>
 
-            <h2 class="section-title">Кто сейчас у костра?</h2>
-            <div class="glass-card players-container" id="player-list">
-                <p style="color: var(--text-muted);">Подключение к API сервера...</p>
-            </div>
+			<h2 class="section-title">Кто сейчас у костра?</h2>
+			<div class="glass-card players-container" id="player-list">
+				<p style="color: var(--text-muted);">Подключение к API сервера...</p>
+			</div>
 
-        </section>
+		</section>
 
-        <!-- ВКЛАДКА 2: О ПРОЕКТЕ -->
         <section id="about" class="tab-content">
             
             <div class="glass-card about-info">
@@ -122,7 +124,6 @@
 
             <div class="team-list">
                 
-                <!-- 1. VerselTheFox (Скин СЛЕВА, Текст СПРАВА) -->
                 <div class="team-member layout-skin-left glass-card">
                     <div class="skin-container">
                         <canvas id="skin-V"></canvas>
@@ -133,7 +134,6 @@
                     </div>
                 </div>
 
-                <!-- 2. regexthefox (Текст СЛЕВА, Скин СПРАВА) -->
                 <div class="team-member layout-skin-right glass-card">
                     <div class="team-info">
                         <h3>regexthefox</h3>
@@ -144,7 +144,6 @@
                     </div>
                 </div>
 
-                <!-- 3. FnQwZz (Скин СЛЕВА, Текст СПРАВА) -->
                 <div class="team-member layout-skin-left glass-card">
                     <div class="skin-container">
                         <canvas id="skin-F"></canvas>
@@ -155,14 +154,12 @@
                     </div>
                 </div>
 
-                <!-- 4. DeepSeek (Текст СЛЕВА, Иконка СПРАВА) -->
                 <div class="team-member layout-skin-right glass-card">
                     <div class="team-info">
                         <h3>DeepSeek AI</h3>
                         <p>Цифровой технический помощник. Помогал писать код для этого сайта (от дизайна до логики), разбирал ошибки в конфигах, подсказывал, как правильно настроить права в LuckPerms и решить проблемы с отображением плейсхолдеров. Всегда на связи для генерации идей и фиксов багов.</p>
                     </div>
                     <div class="skin-container">
-                        <!-- Логотип D.jpg -->
                         <img src="D.jpg" alt="DeepSeek Logo" class="deepseek-icon">
                     </div>
                 </div>

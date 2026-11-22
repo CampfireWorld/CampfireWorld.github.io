@@ -156,3 +156,50 @@ main { flex: 1; max-width: 100%; padding: 40px 8%; width: 100%; }
     text-align: center; padding: 25px; border-radius: 20px 20px 0 0; color: var(--text-muted);
     border-bottom: none; border-left: none; border-right: none; margin-top: auto;
 }
+
+/* Блок MOTD */
+.motd-box {
+    padding: 20px 25px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+}
+
+.motd-box h3 {
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.motd-box p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ddd;
+    white-space: pre-wrap; /* Чтобы сохранялись переносы строк из MOTD */
+}
+
+/* Сетка игроков (теперь через JS создаются элементы) */
+#player-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.player-tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.player-head {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    image-rendering: pixelated; /* Чтобы головы не размывались */
+}
