@@ -1,10 +1,7 @@
 // --- НАСТРОЙКИ API ---
-// ВНИМАНИЕ: Замени эти данные на свои из конфига плагина ServerAPI!
-const API_IP = '37.27.166.94'; // Твой IP сервера (или домен)
-const API_PORT = '8080';       // Порт, который ты открыл в панели хостинга для API
-const API_TOKEN = 'campfire_super_secret_token_2026'; // Токен из config.yml плагина
-
-// Конструктор URL (если у тебя настроен HTTPS, поменяй http:// на https://)
+const API_IP = '37.27.166.94';
+const API_PORT = '8080';
+const API_TOKEN = 'campfire_super_secret_token_2026';
 const API_URL = `http://${API_IP}:${API_PORT}/api/v1/status`; 
 
 // ==========================================
@@ -29,18 +26,13 @@ function toggleTheme() {
     const currentTheme = root.getAttribute('data-theme');
     const newTheme = currentTheme === 'campfire' ? 'purple' : 'campfire';
     
+    // Меняем тему (картинки переключатся сами через CSS)
     root.setAttribute('data-theme', newTheme);
     
-    // Меняем иконку и картинку
+    // Меняем иконку на кнопке
     const themeBtn = document.getElementById('theme-btn');
-    const mainImage = document.getElementById('main-theme-image');
-    
-    if (newTheme === 'campfire') {
-        themeBtn.textContent = '🌌'; // Иконка для переключения на фиолетовую
-        if (mainImage) mainImage.src = 'main.png'; // Возвращаем первую картинку
-    } else {
-        themeBtn.textContent = '🔥'; // Иконка для переключения на костёр
-        if (mainImage) mainImage.src = 'main2.png'; // Ставим вторую картинку
+    if (themeBtn) {
+        themeBtn.textContent = newTheme === 'campfire' ? '🌌' : '🔥';
     }
 }
 
@@ -61,19 +53,16 @@ async function fetchServerStatus() {
 
         const data = await response.json();
 
-        // 1. ОНЛАЙН
         const online = data.players?.online ?? 0;
         const max = data.players?.max ?? 20;
         document.getElementById('online-count').innerText = `${online} / ${max}`;
 
-        // 2. ВЕРСИЯ
         document.getElementById('server-version').innerText = data.version || '1.21.11';
 
-        // 3. РЕАЛЬНЫЙ TPS (обычно плагин отдает массив [1m, 5m, 15m] или объект)
         let tps = 20.0;
         if (data.tps) {
             if (Array.isArray(data.tps)) {
-                tps = data.tps[0]; // Берем TPS за 1 минуту
+                tps = data.tps[0];
             } else if (typeof data.tps === 'object') {
                 tps = data.tps['1m'] || data.tps.oneMinute || 20.0;
             } else if (typeof data.tps === 'number') {
@@ -84,16 +73,14 @@ async function fetchServerStatus() {
         const tpsElement = document.getElementById('tps-value');
         tpsElement.innerText = parseFloat(tps).toFixed(1);
         
-        // Красим TPS в зависимости от просадки
         if (tps < 15.0) {
-            tpsElement.style.color = '#ef4444'; // Красный
+            tpsElement.style.color = '#ef4444';
         } else if (tps < 19.0) {
-            tpsElement.style.color = '#eab308'; // Желтый
+            tpsElement.style.color = '#eab308';
         } else {
-            tpsElement.style.color = '#4ade80'; // Зеленый
+            tpsElement.style.color = '#4ade80';
         }
 
-        // 4. АПТАЙМ (время с последнего рестарта)
         const uptimeSeconds = data.uptime || 0;
         const days = Math.floor(uptimeSeconds / 86400);
         const hours = Math.floor((uptimeSeconds % 86400) / 3600);
@@ -106,11 +93,9 @@ async function fetchServerStatus() {
         
         document.getElementById('uptime').innerText = uptimeText;
 
-        // 5. СПИСОК ИГРОКОВ
         const listContainer = document.getElementById('player-list');
         listContainer.innerHTML = ''; 
         
-        // Плагины могут отдавать список просто как массив строк или как массив объектов {name: "..."}
         let playersList = [];
         if (data.players && data.players.list) {
             playersList = data.players.list;
@@ -118,9 +103,7 @@ async function fetchServerStatus() {
 
         if (playersList.length > 0) {
             playersList.forEach(player => {
-                // Если player - объект, берем имя, если строка - берем саму строку
                 const playerName = typeof player === 'string' ? player : (player.name || player.username);
-                
                 if (!playerName) return;
 
                 const playerTag = document.createElement('div');
@@ -139,8 +122,6 @@ async function fetchServerStatus() {
 
     } catch (error) {
         console.error("Ошибка при загрузке статуса с сервера:", error);
-        
-        // Если API выключено или упало
         document.getElementById('online-count').innerText = 'Оффлайн';
         document.getElementById('tps-value').innerText = '--';
         document.getElementById('tps-value').style.color = 'var(--text-muted)';
@@ -184,12 +165,7 @@ function initSkins() {
 // ЗАПУСК
 // ==========================================
 window.addEventListener("load", () => {
-    // 1. Инициализация 3D скинов
     initSkins();
-
-    // 2. Первый запрос статистики
     fetchServerStatus();
-
-    // 3. Обновление каждые 30 секунд
     setInterval(fetchServerStatus, 30000);
 });

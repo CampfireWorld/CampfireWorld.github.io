@@ -82,8 +82,48 @@ main { flex: 1; max-width: 100%; padding: 40px 8%; width: 100%; }
 .description-card p { font-size: 1.1rem; line-height: 1.7; color: #ddd; margin-bottom: 20px; }
 .secondary-btn { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 12px 25px; font-size: 1rem; cursor: pointer; width: max-content; margin-top: 10px;}
 .secondary-btn:hover { background: var(--primary); color: #000; }
-.image-card { padding: 15px; border-radius: 24px; display: flex; align-items: center; justify-content: center; height: 100%;}
-.main-image { width: 100%; height: auto; border-radius: 16px; display: block; box-shadow: 0 4px 15px rgba(0,0,0,0.5); object-fit: cover;}
+
+/* --- НОВЫЕ СТИЛИ ДЛЯ ПЛАВНОГО ПЕРЕХОДА КАРТИНОК --- */
+.image-card { 
+    padding: 15px; 
+    border-radius: 24px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    height: 100%;
+}
+
+.image-crossfade-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden; /* Чтобы картинки не выходили за скругленные края */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.main-image { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
+    display: block; 
+}
+
+/* Вторая картинка лежит ровно поверх первой и полностью прозрачна */
+.overlay-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out; /* Время плавного перехода */
+}
+
+/* Когда включается фиолетовая тема, вторая картинка проявляется */
+:root[data-theme="purple"] .overlay-image {
+    opacity: 1;
+}
+/* ------------------------------------------------ */
 
 /* СТАТИСТИКА */
 .section-title { font-size: 2.2rem; margin-bottom: 25px; color: var(--text-main); }
@@ -109,17 +149,15 @@ main { flex: 1; max-width: 100%; padding: 40px 8%; width: 100%; }
 .outline-btn:hover { background: var(--primary); color: #000; }
 .small-note { font-size: 0.9rem !important; color: var(--text-muted) !important; font-style: italic; }
 
-/* КОМАНДА (ЗИГ-ЗАГ ЧЕРЕЗ ORDER) */
+/* КОМАНДА */
 .team-subtitle { color: var(--text-muted); margin-bottom: 40px; font-size: 1.2rem; }
 .team-list { display: flex; flex-direction: column; gap: 40px; width: 100%; }
 .team-member { display: flex; align-items: center; padding: 40px; border-radius: 30px; width: 100%; gap: 40px; }
 
-/* Текст всегда слева */
 .team-info { flex: 1; text-align: left; }
 .team-info h3 { font-size: 1.8rem; color: var(--primary); margin-bottom: 15px; }
 .team-info p { line-height: 1.7; color: #ccc; font-size: 1.1rem; }
 
-/* Контейнер для скина */
 .skin-container {
     flex-shrink: 0; width: 150px; height: 300px; display: flex; justify-content: center; align-items: center;
 }
@@ -128,21 +166,17 @@ main { flex: 1; max-width: 100%; padding: 40px 8%; width: 100%; }
     filter: drop-shadow(0 0 15px rgba(0,0,0,0.6));
 }
 
-/* ЛОГИКА ПОРЯДКА (Сначала скин - потом текст, или наоборот) */
 .team-member.layout-skin-left .skin-container { order: 1; }
 .team-member.layout-skin-left .team-info { order: 2; }
-
 .team-member.layout-skin-right .team-info { order: 1; }
 .team-member.layout-skin-right .skin-container { order: 2; }
 
-/* Иконка DeepSeek */
 .deepseek-icon {
     width: 150px; height: 150px; border-radius: 30px; object-fit: cover;
     box-shadow: 0 0 25px rgba(0,0,0,0.5); border: 2px solid var(--primary);
     display: block;
 }
 
-/* Мобильная адаптация (все друг под другом) */
 @media (max-width: 900px) {
     .team-member, .team-member.layout-skin-left, .team-member.layout-skin-right { 
         flex-direction: column; text-align: center; gap: 20px; 
@@ -158,48 +192,18 @@ main { flex: 1; max-width: 100%; padding: 40px 8%; width: 100%; }
 }
 
 /* Блок MOTD */
-.motd-box {
-    padding: 20px 25px;
-    border-radius: 20px;
-    margin-bottom: 40px;
-}
+.motd-box { padding: 20px 25px; border-radius: 20px; margin-bottom: 40px; }
+.motd-box h3 { font-size: 1.2rem; color: var(--primary); margin-bottom: 10px; }
+.motd-box p { font-size: 1.1rem; line-height: 1.6; color: #ddd; white-space: pre-wrap; }
 
-.motd-box h3 {
-    font-size: 1.2rem;
-    color: var(--primary);
-    margin-bottom: 10px;
-}
-
-.motd-box p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #ddd;
-    white-space: pre-wrap; /* Чтобы сохранялись переносы строк из MOTD */
-}
-
-/* Сетка игроков (теперь через JS создаются элементы) */
-#player-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 10px;
-}
-
+/* Сетка игроков */
+#player-list { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; }
 .player-tag {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--glass-border);
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-weight: 600;
-    color: var(--text-main);
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border);
+    padding: 8px 16px; border-radius: 12px;
+    font-weight: 600; color: var(--text-main);
 }
-
 .player-head {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    image-rendering: pixelated; /* Чтобы головы не размывались */
+    width: 32px; height: 32px; border-radius: 6px; image-rendering: pixelated;
 }

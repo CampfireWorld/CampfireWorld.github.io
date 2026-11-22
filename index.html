@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CampfireWorld | Уютный сервер</title>
-    <!-- Иконка сайта (та самая base64 картинка) -->
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAD9klEQVR4nO1avVPUQBx9fHgnXFR0HDzHykEc5wpsrrG0sXAsHUpb9Q+w559gtLa0ltqShoYrGMaPHhl0UHMIAsYieQd5lx+b3Adx5vY1ud1sdjf73u8rAJSE1cXpaHVxOiprfWK87A2UjbGyFlb2H7zbK2UvI6+A0g5gvjGO+Ub551/+DkrG5HkvOGjPz/l69SFeAYOaKC8Tavdl+wGvgEFN5GJebX+qeQ8A8HttM3Vf52m/b0YAUHuy1leesLMURABwfSlMzeMVcF4LuWzdup+XeZcPUuYJr4BhL+CK+3l9gTUvlfNp429P+/MKGPYCattkfKL5EABwvPZh2Fs4E14B570gmbfgihZq+/3CK6DoA0W9NEHb/9/gFdDrg/3W4QR9wlTSduUDtH3NH9hfdF9eAUUfcGVelu13ef9rC/H1eyt1n0rAxsaZ+7CUUxReAXkHKrNWHHbm5mRe24kSrPlZzw86mngFuAa4Mi/rS8vCs0a+HZD5jjLStYEynzeTzBsNvAJcA3iCZIIIXrwEcFLN7SxtZjLlrPbEJ3QYTrx6XuatfbvgFZB3IL26+gKNx06mumw+G0WZ18wwL0ZeAYXzeH6nJ1wZXle/BVWG9XzSr76FzFtffy2MvAKG/0XIYl4Zt8Y5lEPm/VfhHlFYAa23cZXmzPTUlq0aQJEzSij8/wf0iLG7M5cjAPi4+zPzBK1cn9GgEwVcjPcLiQrhm9fI2lfeGuBWLR438gqYrNcu8ncqvlMRVlyl9z3JAJMfyrylCCvuW+MSMP5bXt9inowTN6bj9/YKCCoTAIA64hOpX6ryXuZfdamMTm0AUcKjPr27MY7MMwrltXGCjBNBJQ6AXgFBNT4JXrd+HQAA6BtOKQIA0D48igDg6UrSsRIrYf1VrISgeXYO35XjK6xaQKAMK+ZmAgBA+OcIAFAPqkn7GACw1d4H4BWAsce3b0YAsBUmzAfVzIG8b+Hr3n6qXbsQK6q1vRx3uKpDg/G5ueXMfs4f8FrhdSI1Thkn+JxXADNB2jxthqAi6CMU4UE8XhVCRr7shql+Mke0Np+n2so4bVkZPJW/pPYdHqb3rwohuC+vgJlKJQKA2SROtpMTVC9KqDdV0AYtRShUIa51Cc5flHGC7+kVQAUo1FbJDKEMWQxrHtF5PvEdVJLacFuYtZSh0ceCzkd4BVgKUKgiNA4rLJu1xmmU+fytnWqrrbcNpbig7+EVwJy66EkSs1JlKe5craXaavMKVY6lDFUEsW34BGWe8Aqwqqp+bcvq57z3Z6+k+i1lWLWJKoNRZX37R+Z61r68AlQBeZm3ogJhRQerRqAiNMO0MkudT/MNftewMkBi5BXwD3w76INdP+8sAAAAAElFTkSuQmCC">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- Библиотека для 3D-скинов -->
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/bundles/skinview3d.bundle.js"></script>
 </head>
 <body>
@@ -28,12 +26,10 @@
                 <button class="nav-btn" onclick="switchTab('about', this)">О проекте</button>
             </nav>
         </div>
-        <!-- Кнопка смены темы -->
         <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌌</button>
     </header>
 
     <main>
-        <!-- ВКЛАДКА 1: ГЛАВНАЯ -->
         <section id="home" class="tab-content active">
             
             <div class="hero-grid">
@@ -57,10 +53,16 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- ИЗМЕНЕННЫЙ БЛОК С КАРТИНКАМИ -->
                 <div class="hero-right glass-card image-card">
-                    <!-- Картинка меняется через JS. В папке должны лежать main.png и main2.png -->
-                    <img src="main.png" alt="Скриншот CampfireWorld" class="main-image" id="main-theme-image">
+                    <div class="image-crossfade-container">
+                        <img src="main.png" alt="Скриншот CampfireWorld" class="main-image base-image">
+                        <img src="main2.png" alt="Скриншот CampfireWorld (Фиолетовый)" class="main-image overlay-image">
+                    </div>
                 </div>
+                <!-- КОНЕЦ ИЗМЕНЕННОГО БЛОКА -->
+
             </div>
 
             <h2 class="section-title">Статус сервера</h2>
@@ -73,7 +75,6 @@
                     <span class="stat-label">Версия</span>
                     <span class="stat-value" id="server-version">Загрузка...</span>
                 </div>
-                <!-- Исправленный блок TPS -->
                 <div class="glass-card stat-box">
                     <span class="stat-label">TPS (Тиков в секунду)</span>
                     <span class="stat-value" id="tps-value" style="color: #4ade80;">Загрузка...</span>
@@ -91,7 +92,6 @@
 
         </section>
 
-        <!-- ВКЛАДКА 2: О ПРОЕКТЕ -->
         <section id="about" class="tab-content">
             
             <div class="glass-card about-info">
@@ -113,17 +113,14 @@
                     <p><b>Запасной IP (через прокси):</b> <code>campfireworldproxy.joinserver.ru</code></p>
                 </div>
 
-                <!-- Сюда вставь ссылку на гугл форму -->
                 <a href="#" class="btn" target="_blank">Подать заявку на вайтлист</a>
             </div>
 
-            <!-- Блок с клиентами -->
             <div class="glass-card downloads-info">
                 <h2>Необязательная сборка</h2>
                 <p>Играть можно с абсолютно чистым клиентом. Но если вы хотите видеть наши кастомные модельки, ресурспаки и другие плюшки — скачайте сборку.</p>
                 <div class="download-buttons">
                     <a href="CampfireWorld.mrpack" download class="btn outline-btn">Скачать .mrpack (Лаунчеры)</a>
-                    <!-- Кнопка для скачивания двух файлов с Гугл Диска -->
                     <button onclick="downloadBoth()" class="btn outline-btn">Скачать Моды + Ресурспаки</button>
                 </div>
                 <p class="small-note">* Все файлы полностью опциональны и не обязательны для игры. Файлы весят много, поэтому качаются с Google Диска.</p>
@@ -134,7 +131,6 @@
 
             <div class="team-list">
                 
-                <!-- 1. VerselTheFox (Скин СЛЕВА, Текст СПРАВА) -->
                 <div class="team-member layout-skin-left glass-card">
                     <div class="skin-container">
                         <canvas id="skin-V"></canvas>
@@ -145,7 +141,6 @@
                     </div>
                 </div>
 
-                <!-- 2. regexthefox (Текст СЛЕВА, Скин СПРАВА) -->
                 <div class="team-member layout-skin-right glass-card">
                     <div class="team-info">
                         <h3>regexthefox</h3>
@@ -156,7 +151,6 @@
                     </div>
                 </div>
 
-                <!-- 3. FnQwZz (Скин СЛЕВА, Текст СПРАВА) -->
                 <div class="team-member layout-skin-left glass-card">
                     <div class="skin-container">
                         <canvas id="skin-F"></canvas>
@@ -167,7 +161,6 @@
                     </div>
                 </div>
 
-                <!-- 4. DeepSeek (Текст СЛЕВА, Иконка СПРАВА) -->
                 <div class="team-member layout-skin-right glass-card">
                     <div class="team-info">
                         <h3>DeepSeek AI</h3>
