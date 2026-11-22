@@ -59,33 +59,60 @@ function initFox() {
     dirLight.position.set(5, 5, 5);
     scene.add(dirLight);
 
-    // 3. Загрузка модели
-    const loader = new THREE.GLTFLoader();
-    // ВАЖНО: Файл должен называться fox.glb и лежать рядом с index.html
-    loader.load('fox.glb', function (gltf) {
-        const model = gltf.scene;
-        
-        // Центрируем модель и подгоняем масштаб (зависит от исходного размера модели)
-        // Если модель слишком большая/маленькая, измени цифру в scale
-        model.scale.set(1, 1, 1); 
-        model.position.y = -0.5;
-        
-        scene.add(model);
+// ... (начало функции initFox() и создание сцены, камеры, рендерера, света остаются без изменений)
 
-        // Анимация вращения
+    // Загрузчик
+    const loader = new THREE.GLTFLoader();
+    
+    // ... (код для DRACOLoader остается без изменений)
+
+    // Загрузка модели
+    loader.load('./fox.glb', function (gltf) {
+        const model = gltf.scene;
+
+        // 1. Сначала "сбрасываем" возможные странные трансформации модели
+        model.position.set(0, 0, 0);
+        model.scale.set(1, 1, 1);
+
+        // 2. Вычисляем реальные размеры и центр модели
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+
+        // 3. Автоматически центрируем модель в начале координат
+        model.position.x += (model.position.x - center.x);
+        model.position.y += (model.position.y - center.y);
+        model.position.z += (model.position.z - center.z);
+
+        // 4. Автоматически масштабируем модель
+        // Находим самую большую сторону, чтобы вписать модель в куб со стороной 2
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 2 / maxDim;
+        model.scale.set(scale, scale, scale);
+
+        scene.add(model);
+        console.log("Модель лисы успешно загружена и адаптирована!");
+
+        // 5. Теперь, когда модель на месте, можно настроить камеру
+        // Ставим камеру на расстоянии, чтобы модель точно поместилась в кадр
+        camera.position.set(0, 0, 3); 
+        camera.lookAt(0, 0, 0);
+
         function animate() {
             requestAnimationFrame(animate);
-            // Модель медленно вращается по оси Y
             model.rotation.y += 0.005; 
             renderer.render(scene, camera);
         }
         animate();
 
-    }, undefined, function (error) {
-        console.error('Ошибка загрузки модели лисы:', error);
-        // Если модели нет, показываем смайлик-заглушку
-        container.innerHTML = '<div style="font-size: 60px; text-align: center; line-height: 120px;">🦊</div>';
+    }, 
+    undefined, 
+    function (error) {
+        console.error('ОШИБКА ЗАГРУЗКИ МОДЕЛИ:', error);
+        container.innerHTML = '<div style="font-size: 60px; text-align: center; line-height: 120px;" title="Ошибка: модель не загрузилась">🦊</div>';
     });
+
+// ... (остальной код функции initFox() остается без изменений)
 
     // 4. Клик по лисе
     const phrases = [
