@@ -9,6 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.0.0/bundles/skinview3d.bundle.js"></script>
+    
+    <!-- Подключение Three.js для 3D лисы -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
@@ -36,32 +40,33 @@
                 <div class="hero-left">
                     <div class="title-row">
                         <h1 class="main-title">CampfireWorld</h1>
-                        <span class="version-badge">Версия 1.21.11</span>
+                        <span class="version-badge">1.21.11</span>
                     </div>
                     
                     <div class="glass-card description-card">
-                        <h2 class="sub-title">Место, где тепло.</h2>
+                        <h2 class="sub-title">Ваш теплый уголок!</h2>
                         <p>
-                            CampfireWorld — это маленький, уютный ванильный сервер, созданный для душевных посиделок. 
-                            Здесь нет безумных плагинов, ломающих базовую игру, и нет жестких правил. 
-                            Мы не гонимся за популярностью и онлайном в тысячи человек. Наша цель — создать ламповое место, 
-                            где можно собраться с друзьями, строить, исследовать мир и просто общаться. 
-                            Гриф мобами отключен — ваши постройки в безопасности.
+                            CampfireWorld — это маленький, уютный и ванильный сервер, созданный для душ заблудших~
+						</p>
+						<p>
+                            Здесь нет безумных плагинов и жестких правил, ломающих ванильный опыт игры. 
+                            Мы не гонимся за популярностью и онлайном в сотни человек.
+						</p>
+						<p>
+							Наша цель — создать ламповое место, где можно собраться с друзьями, строить, исследовать мир и просто общаться. 
                         </p>
                         <button class="btn secondary-btn" onclick="switchTab('about', document.querySelectorAll('.nav-btn')[1])">
-                            Подать заявку →
+                            О проекте (Заявка)
                         </button>
                     </div>
                 </div>
                 
-                <!-- ИЗМЕНЕННЫЙ БЛОК С КАРТИНКАМИ -->
                 <div class="hero-right glass-card image-card">
                     <div class="image-crossfade-container">
                         <img src="main.png" alt="Скриншот CampfireWorld" class="main-image base-image">
                         <img src="main2.png" alt="Скриншот CampfireWorld (Фиолетовый)" class="main-image overlay-image">
                     </div>
                 </div>
-                <!-- КОНЕЦ ИЗМЕНЕННОГО БЛОКА -->
 
             </div>
 
@@ -81,11 +86,11 @@
                 </div>
                 <div class="glass-card stat-box">
                     <span class="stat-label">Аптайм</span>
-                    <span class="stat-value" id="uptime">В сети</span>
+                    <span class="stat-value" id="uptime">-</span>
                 </div>
             </div>
 
-            <h2 class="section-title">Кто сейчас у костра?</h2>
+            <h2 class="section-title">Заблудшие души:</h2>
             <div class="glass-card players-container" id="player-list">
                 <p style="color: var(--text-muted);">Подключение к API сервера...</p>
             </div>
@@ -95,29 +100,32 @@
         <section id="about" class="tab-content">
             
             <div class="glass-card about-info">
-                <h2>Как мы строили этот мир</h2>
-                <p>Этот сервер — не просто скачанный шаблон. Это результат сотен часов работы, бессонных ночей и постоянного поиска решений. Мы начинали с нуля, сталкивались с кучей ошибок, но скрупулезно чинили каждую, чтобы вам было комфортно.</p>
-                <p>Мы вручную настраивали каждый плагин, чтобы сохранить ванильный дух игры. Нам пришлось разбираться с прокси-серверами (Anycast), чтобы у всех был стабильный пинг, и настраивать порты, чтобы у вас работал голосовой чат. Мы не сдавались, даже когда сервер падал или когда TPS проседал на фермах. Всё это — ради создания уютного места.</p>
+                <h2>Что стоит знать?</h2>
+                <p>Этот сервер — не скачанный шаблон. Это результат десятков часов работы, пары бессонных ночей и постоянного поиска решений. Мы начинали с нуля, сталкивались с кучей ошибок, но скрупулезно чинили каждую, чтобы вам было комфортно.</p>
+                <p>Мы вручную настраивали несколько плагинов, чтобы бы всё работало как один организм. Так же позаботились об альтернативном IP через Anycast, чтобы у всех был стабильный пинг, и настраивали порты, чтобы у вас работал голосовой чат. Это делают многие, но никто не говорит об этом. Мы правда старались и стараемся.</p>
                 
-                <h3>Как к нам попасть?</h3>
+                <h3>Как сюда попасть?</h3>
                 <ul>
-                    <li><b>Версия:</b> 1.21.11 (Java Edition). Лицензия не требуется.</li>
-                    <li><b>Вайтлист:</b> Включен для защиты от случайных людей. Подай заявку ниже.</li>
-                    <li><b>Голосовой чат:</b> Установлен PlasmoVoice (работает прямо в игре).</li>
-                    <li><b>Кастомизация:</b> Поддерживается мод Figura для кастомных моделек.</li>
+                    <li><b>Подать зявку:</b> перейти и заполнить анкету. (Рассмотрят в течении суток)</li>
+                    <li><b>Добавить сервер:</b> Java 1.21.11, вставить IP. (Альтернативный, если не работает основной).</li>
                 </ul>
 
-                <h3>Наши адреса:</h3>
+                <h3>Наши адреса (нажми, чтобы скопировать):</h3>
+                
+                <!-- Обновленный блок с IP и 3D-лисой -->
                 <div class="ip-box">
-                    <p><b>Основной IP:</b> <code>campfireworld.joinserver.ru</code></p>
-                    <p><b>Запасной IP (через прокси):</b> <code>campfireworldproxy.joinserver.ru</code></p>
+                    <div class="ip-text-content">
+                        <p><b>Основной IP:</b> <code class="copyable" onclick="copyToClipboard(event, 'campfireworld.joinserver.ru')">campfireworld.joinserver.ru</code></p>
+                        <p><b>Альтернативный IP (Anycast):</b> <code class="copyable" onclick="copyToClipboard(event, 'campfireworldproxy.joinserver.ru')">campfireworldproxy.joinserver.ru</code></p>
+                    </div>
+                    <div id="fox-container" class="fox-container" title="Не тыкай лису!"></div>
                 </div>
 
                 <a href="#" class="btn" target="_blank">Подать заявку на вайтлист</a>
             </div>
 
             <div class="glass-card downloads-info">
-                <h2>Необязательная сборка</h2>
+                <h2>Сборка для лучшего опыта. (Необязательно!)</h2>
                 <p>Играть можно с абсолютно чистым клиентом. Но если вы хотите видеть наши кастомные модельки, ресурспаки и другие плюшки — скачайте сборку.</p>
                 <div class="download-buttons">
                     <a href="CampfireWorld.mrpack" download class="btn outline-btn">Скачать .mrpack (Лаунчеры)</a>
@@ -126,8 +134,8 @@
                 <p class="small-note">* Все файлы полностью опциональны и не обязательны для игры. Файлы весят много, поэтому качаются с Google Диска.</p>
             </div>
 
-            <h2 class="section-title" style="margin-top: 50px;">Кто над этим работал?</h2>
-            <p class="team-subtitle">Мы работали над этим вместе, вкладывая душу в каждую деталь.</p>
+            <h2 class="section-title" style="margin-top: 50px;">Благодаря кому этот сервер увидел свет?</h2>
+            <p class="team-subtitle">Работали над ним мы все вместе, каждая деталь была важна.</p>
 
             <div class="team-list">
                 
@@ -136,15 +144,15 @@
                         <canvas id="skin-V"></canvas>
                     </div>
                     <div class="team-info">
-                        <h3>VerselTheFox</h3>
-                        <p>Идейный вдохновитель и душа проекта. Придумал концепцию «посиделок у костра», разработал этот сайт с нуля, занимался визуальной частью (включая настройку TAB и сообщений), тестированием каждой механики и координацией всех процессов. Вложил всю душу в атмосферу.</p>
+                        <h3 style="font-size: 30px">VerselTheFox</h3>
+                        <p style="font-size: 20px">Генерировал идеи и координировал процессы. (Рестарты, настройки и тесты плагинов, перевод и визуальная часть.)</p>
                     </div>
                 </div>
 
                 <div class="team-member layout-skin-right glass-card">
                     <div class="team-info">
-                        <h3>regexthefox</h3>
-                        <p>Технический фундамент. Оплачивает хостинг, поднял сервер с нуля, настроил ядро Paper. Разбирался со сложными прокси-туннелями (Anycast) для стабильного входа, пробрасывал порты для PlasmoVoice, настраивал LuckPerms, чтобы скрыть плагины от читеров и выдать безопасные права модераторам. Постоянно фиксит баги и работает с конфигами.</p>
+                        <h3 style="font-size: 30px">regexthefox</h3>
+                        <p style="font-size: 20px">Оплата хостинга и связующее звено. (Настройка плагинов, тесты, рестарты, работа с альтернативным IP и LuckPerms.)</p>
                     </div>
                     <div class="skin-container">
                         <canvas id="skin-R"></canvas>
@@ -156,18 +164,18 @@
                         <canvas id="skin-F"></canvas>
                     </div>
                     <div class="team-info">
-                        <h3>FnQwZz</h3>
-                        <p>Катализатор и моральная поддержка. Именно он однажды сказал, что ему негде играть и стримить, что подтолкнуло нас к активным действиям. Без него идея могла бы так и остаться в голове, а этот сервер — не появиться на свет. Он стал искрой для нашего костра.</p>
+                        <h3 style="font-size: 30px">FnQwZz</h3>
+                        <p style="font-size: 20px">Однажды сказав пару фраз, изменил наши планы в лучшую сторону. Без него сервер был бы отложен в дальний-дальний ящик. (Привлечение людей и коммуникация с ними.)</p>
                     </div>
                 </div>
 
                 <div class="team-member layout-skin-right glass-card">
                     <div class="team-info">
-                        <h3>DeepSeek AI</h3>
-                        <p>Цифровой технический помощник. Помогал писать код для этого сайта (от дизайна до логики), разбирал ошибки в конфигах, подсказывал, как правильно настроить права в LuckPerms и решить проблемы с отображением плейсхолдеров. Всегда на связи для генерации идей и фиксов багов.</p>
+                        <h3 style="font-size: 30px">DeepSeek AI</h3>
+                        <p style="font-size: 20px">Разработка сайта и скриптов, перевод плагинов, оптимизация процесса настройки, советы и инструкции.</p>
                     </div>
                     <div class="skin-container">
-                        <img src="D.png" alt="DeepSeek Logo" class="deepseek-icon">
+                        <img src="D.jpg" alt="DeepSeek Logo" class="deepseek-icon">
                     </div>
                 </div>
 
@@ -176,8 +184,8 @@
     </main>
 
     <footer class="glass-footer">
-        <p>&copy; 22 Ноября 2026 года. CampfireWorld. Все права защищены.</p>
-        <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 5px;">Сделано с любовью у костра.</p>
+        <p>&copy; 22.11.26. CampfireWorld. Все права защищены.</p>
+        <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 5px;">Все печеньки у FnQwZz!</p>
     </footer>
 
     <script src="script.js"></script>

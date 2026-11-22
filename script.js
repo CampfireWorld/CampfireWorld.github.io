@@ -5,6 +5,130 @@ const API_TOKEN = 'campfire_super_secret_token_2026';
 const API_URL = `http://${API_IP}:${API_PORT}/api/v1/status`; 
 
 // ==========================================
+// КОПИРОВАНИЕ IP (СО СЛУЧАЙНЫМ РАЗБРОСОМ)
+// ==========================================
+function copyToClipboard(event, text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const toast = document.createElement('div');
+        toast.className = 'copy-toast';
+        toast.innerText = 'Скопировано!';
+        
+        // Случайный разброс вокруг курсора (-30 до +30 пикселей по X, -20 до +20 по Y)
+        const randomX = (Math.random() - 0.5) * 60;
+        const randomY = (Math.random() - 0.5) * 40;
+        
+        toast.style.left = (event.clientX + randomX) + 'px';
+        toast.style.top = (event.clientY + randomY) + 'px';
+        
+        document.body.appendChild(toast);
+        
+        // Удаляем элемент после окончания CSS-анимации (1.5 сек)
+        setTimeout(() => {
+            if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 1500);
+        
+    }).catch(err => {
+        console.error('Ошибка при копировании: ', err);
+    });
+}
+
+// ==========================================
+// 3D ЛИСА (THREE.JS)
+// ==========================================
+function initFox() {
+    const container = document.getElementById('fox-container');
+    if (!container) return;
+
+    // 1. Сцена, камера, рендерер
+    const scene = new THREE.Scene();
+    
+    // Настройка камеры (FOV, Aspect, Near, Far)
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(0, 1, 4); // Отодвигаем камеру
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    // 2. Освещение (чтобы модель не была черной)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
+    
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(5, 5, 5);
+    scene.add(dirLight);
+
+    // 3. Загрузка модели
+    const loader = new THREE.GLTFLoader();
+    // ВАЖНО: Файл должен называться fox.glb и лежать рядом с index.html
+    loader.load('fox.glb', function (gltf) {
+        const model = gltf.scene;
+        
+        // Центрируем модель и подгоняем масштаб (зависит от исходного размера модели)
+        // Если модель слишком большая/маленькая, измени цифру в scale
+        model.scale.set(1, 1, 1); 
+        model.position.y = -0.5;
+        
+        scene.add(model);
+
+        // Анимация вращения
+        function animate() {
+            requestAnimationFrame(animate);
+            // Модель медленно вращается по оси Y
+            model.rotation.y += 0.005; 
+            renderer.render(scene, camera);
+        }
+        animate();
+
+    }, undefined, function (error) {
+        console.error('Ошибка загрузки модели лисы:', error);
+        // Если модели нет, показываем смайлик-заглушку
+        container.innerHTML = '<div style="font-size: 60px; text-align: center; line-height: 120px;">🦊</div>';
+    });
+
+    // 4. Клик по лисе
+    const phrases = [
+        "Фыр", "фыр", "ФЫР", "Фыр!", "Фырк", "фыр~", "Фыр?", "ФЫРК!", 
+        "фыр...", "Фыр-фыр", "Фырк~", "фыр!", "Фырк?", "ФЫР...", "фыр-фыр~", 
+        "Фыр-фыр!", "Фыр :3", "фыр ;3"
+    ];
+
+    container.addEventListener('click', (e) => {
+        // Добавляем класс тряски
+        container.classList.add('shake');
+        setTimeout(() => container.classList.remove('shake'), 400);
+
+        // Создаем текст
+        const phraseEl = document.createElement('div');
+        phraseEl.className = 'fox-phrase';
+        phraseEl.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+
+        // Случайная позиция вокруг курсора ВНУТРИ контейнера
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left + (Math.random() - 0.5) * 40;
+        const y = e.clientY - rect.top + (Math.random() - 0.5) * 40;
+
+        phraseEl.style.left = x + 'px';
+        phraseEl.style.top = y + 'px';
+        
+        container.appendChild(phraseEl);
+
+        // Удаляем после завершения анимации
+        setTimeout(() => {
+            if (phraseEl.parentNode) phraseEl.parentNode.removeChild(phraseEl);
+        }, 1200);
+    });
+
+    // Обновление размера при ресайзе окна
+    window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+}
+
+// ==========================================
 // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК И ТЕМ
 // ==========================================
 function switchTab(tabId, btn) {
@@ -25,11 +149,8 @@ function toggleTheme() {
     const root = document.documentElement;
     const currentTheme = root.getAttribute('data-theme');
     const newTheme = currentTheme === 'campfire' ? 'purple' : 'campfire';
-    
-    // Меняем тему (картинки переключатся сами через CSS)
     root.setAttribute('data-theme', newTheme);
     
-    // Меняем иконку на кнопке
     const themeBtn = document.getElementById('theme-btn');
     if (themeBtn) {
         themeBtn.textContent = newTheme === 'campfire' ? '🌌' : '🔥';
@@ -42,14 +163,10 @@ function toggleTheme() {
 async function fetchServerStatus() {
     try {
         const response = await fetch(API_URL, {
-            headers: {
-                'Authorization': `Bearer ${API_TOKEN}`
-            }
+            headers: { 'Authorization': `Bearer ${API_TOKEN}` }
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const data = await response.json();
 
@@ -61,25 +178,17 @@ async function fetchServerStatus() {
 
         let tps = 20.0;
         if (data.tps) {
-            if (Array.isArray(data.tps)) {
-                tps = data.tps[0];
-            } else if (typeof data.tps === 'object') {
-                tps = data.tps['1m'] || data.tps.oneMinute || 20.0;
-            } else if (typeof data.tps === 'number') {
-                tps = data.tps;
-            }
+            if (Array.isArray(data.tps)) tps = data.tps[0];
+            else if (typeof data.tps === 'object') tps = data.tps['1m'] || data.tps.oneMinute || 20.0;
+            else if (typeof data.tps === 'number') tps = data.tps;
         }
         
         const tpsElement = document.getElementById('tps-value');
         tpsElement.innerText = parseFloat(tps).toFixed(1);
         
-        if (tps < 15.0) {
-            tpsElement.style.color = '#ef4444';
-        } else if (tps < 19.0) {
-            tpsElement.style.color = '#eab308';
-        } else {
-            tpsElement.style.color = '#4ade80';
-        }
+        if (tps < 15.0) tpsElement.style.color = '#ef4444';
+        else if (tps < 19.0) tpsElement.style.color = '#eab308';
+        else tpsElement.style.color = '#4ade80';
 
         const uptimeSeconds = data.uptime || 0;
         const days = Math.floor(uptimeSeconds / 86400);
@@ -97,9 +206,7 @@ async function fetchServerStatus() {
         listContainer.innerHTML = ''; 
         
         let playersList = [];
-        if (data.players && data.players.list) {
-            playersList = data.players.list;
-        }
+        if (data.players && data.players.list) playersList = data.players.list;
 
         if (playersList.length > 0) {
             playersList.forEach(player => {
@@ -131,23 +238,17 @@ async function fetchServerStatus() {
 }
 
 // ==========================================
-// 3D СКИНЫ
+// 3D СКИНЫ КОМАНДЫ
 // ==========================================
 function initSkins() {
-    if (typeof skinview3d === 'undefined') {
-        console.warn("Библиотека skinview3d не загружена.");
-        return;
-    }
+    if (typeof skinview3d === 'undefined') return;
 
     const createSkin = (canvasId, skinUrl) => {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
         try {
             const viewer = new skinview3d.SkinViewer({
-                canvas: canvas,
-                width: 150,
-                height: 300,
-                skin: skinUrl
+                canvas: canvas, width: 150, height: 300, skin: skinUrl
             });
             viewer.animation = null; 
             viewer.camera.rotation.y = -0.5; 
@@ -166,6 +267,7 @@ function initSkins() {
 // ==========================================
 window.addEventListener("load", () => {
     initSkins();
+    initFox(); // Запуск лисы
     fetchServerStatus();
     setInterval(fetchServerStatus, 30000);
 });
