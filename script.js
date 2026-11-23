@@ -1,11 +1,18 @@
 // --- НАСТРОЙКИ API ---
-const API_IP = '37.27.166.94';
-const API_PORT = '25532';
-const API_TOKEN = '2H-0s6mmf3ZAsJAenQaHV_CjjAzo0CJTSRt_dixOIK8';
+const API_IP = '37.27.166.94'; 
+// ВАЖНО: Мы поменяли порт на 25782, чтобы он совпадал с тем, что выдан в панели хостинга
+const API_PORT = '25782'; 
+const API_TOKEN = 'KoI29DCjRMCe-B5eC4BiispihdSrgkokwqG9WtEAHtE'; 
 const API_BASE = `http://${API_IP}:${API_PORT}/api`; 
 
 // ==========================================
-// КОПИРОВАНИЕ IP (СО СЛУЧАЙНЫМ РАЗБРОСОМ)
+// ССЫЛКИ НА СКАЧИВАНИЕ
+// ==========================================
+const DOWNLOAD_MODS_URL = 'https://drive.google.com/uc?export=download&id=1Jp3-ZgZlbtp8XTI4hfE8SafWFOVyC_VR&confirm=t';
+const DOWNLOAD_RESOURCEPACKS_URL = 'https://drive.google.com/uc?export=download&id=1_I6Jn_HEwUl2innsJaAUp3Y3lZvd-Dv5&confirm=t';
+
+// ==========================================
+// КОПИРОВАНИЕ IP
 // ==========================================
 function copyToClipboard(event, text) {
     navigator.clipboard.writeText(text).then(() => {
@@ -31,7 +38,28 @@ function copyToClipboard(event, text) {
 }
 
 // ==========================================
-// 3D ЛИСА (THREE.JS)
+// СКАЧИВАНИЕ
+// ==========================================
+function triggerDownload(url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+function downloadMods() {
+    triggerDownload(DOWNLOAD_MODS_URL);
+}
+
+function downloadResourcepacks() {
+    triggerDownload(DOWNLOAD_RESOURCEPACKS_URL);
+}
+
+// ==========================================
+// 3D ЛИСА
 // ==========================================
 function initFox() {
     const container = document.getElementById('fox-container');
@@ -62,7 +90,6 @@ function initFox() {
 
     loader.load('./fox.glb', function (gltf) {
         const model = gltf.scene;
-        
         model.position.set(0, 0, 0);
         model.scale.set(1, 1, 1);
 
@@ -90,9 +117,7 @@ function initFox() {
         }
         animate();
 
-    }, 
-    undefined, 
-    function (error) {
+    }, undefined, function (error) {
         console.error('ОШИБКА ЗАГРУЗКИ МОДЕЛИ:', error);
         container.innerHTML = '<div style="font-size: 60px; text-align: center; line-height: 120px;" title="Ошибка: модель не загрузилась">🦊</div>';
     });
@@ -166,7 +191,6 @@ function toggleTheme() {
 // ==========================================
 async function fetchServerStatus() {
     try {
-        // Запрашиваем все нужные данные ОДНОВРЕМЕННО для скорости
         const headers = { 'Authorization': `Bearer ${API_TOKEN}` };
         
         const [statusRes, perfRes, playersRes] = await Promise.all([
@@ -183,24 +207,16 @@ async function fetchServerStatus() {
         const perfData = await perfRes.json();
         const playersData = await playersRes.json();
 
-        // Выведем данные в консоль, чтобы ты мог посмотреть, как они называются, если вдруг что-то не совпадет
-        console.log("API Status:", statusData);
-        console.log("API Performance:", perfData);
-        console.log("API Players:", playersData);
-
-        // 1. ОНЛАЙН (пытаемся найти в разных возможных ключах)
         const online = statusData.online ?? statusData.players?.online ?? statusData.playersOnline ?? 0;
         const max = statusData.max ?? statusData.players?.max ?? statusData.playersMax ?? 20;
         document.getElementById('online-count').innerText = `${online} / ${max}`;
 
-        // 2. ВЕРСИЯ
         document.getElementById('server-version').innerText = statusData.version || statusData.serverVersion || '1.21.11';
 
-        // 3. TPS (TPS обычно приходит в performance)
         let tps = 20.0;
         const rawTps = perfData.tps || perfData.TPS;
         if (rawTps) {
-            if (Array.isArray(rawTps)) tps = rawTps[0]; // Берем за 1 минуту
+            if (Array.isArray(rawTps)) tps = rawTps[0];
             else if (typeof rawTps === 'object') tps = rawTps['1m'] || rawTps.oneMinute || 20.0;
             else if (typeof rawTps === 'number') tps = rawTps;
         }
@@ -212,7 +228,6 @@ async function fetchServerStatus() {
         else if (tps < 19.0) tpsElement.style.color = '#eab308';
         else tpsElement.style.color = '#4ade80';
 
-        // 4. АПТАЙМ (обычно в status, в секундах)
         const uptimeSeconds = statusData.uptime || statusData.uptimeSeconds || 0;
         const days = Math.floor(uptimeSeconds / 86400);
         const hours = Math.floor((uptimeSeconds % 86400) / 3600);
@@ -225,16 +240,13 @@ async function fetchServerStatus() {
         
         document.getElementById('uptime').innerText = uptimeText || 'Только что';
 
-        // 5. СПИСОК ИГРОКОВ
         const listContainer = document.getElementById('player-list');
         listContainer.innerHTML = ''; 
         
-        // API может возвращать массив как есть, или внутри объекта
         let playersList = Array.isArray(playersData) ? playersData : (playersData.players || playersData.list || []);
 
         if (playersList.length > 0) {
             playersList.forEach(player => {
-                // Имя может быть строкой или объектом {name: "..."}
                 const playerName = typeof player === 'string' ? player : (player.name || player.username);
                 if (!playerName) return;
 
@@ -292,5 +304,5 @@ window.addEventListener("load", () => {
     initSkins();
     initFox(); 
     fetchServerStatus();
-    setInterval(fetchServerStatus, 30000); // Обновление каждые 30 сек
+    setInterval(fetchServerStatus, 30000);
 });
